@@ -1,4 +1,4 @@
-#include "Safespace.h"    
+#include "Safespace.h"
     
     
 Safespace::Safespace(Vec2D top_left, Vec2D bottom_right):
@@ -10,14 +10,14 @@ void Safespace::draw(Terminal& term){
     
     for(int y = _top_left.y; y <= _bottom_right.y; ++y)
     {
-        term.set_cell(_top_left.x, y, '#');
-        term.set_cell(_bottom_right.x, y, '|');
+        term.set_cell(_top_left.x, y, '#', WHITE_BLACK);
+        term.set_cell(_bottom_right.x, y, '|', WHITE_BLACK);
     }
     
     for(int x = _top_left.x; x <= _bottom_right.x; ++x)
     {
-        term.set_cell(x, _top_left.y, '#');
-        term.set_cell(x, _bottom_right.y, '#');
+        term.set_cell(x, _top_left.y, '#', WHITE_BLACK);
+        term.set_cell(x, _bottom_right.y, '#', WHITE_BLACK);
     }
 
 }

@@ -2,6 +2,20 @@
 #define TERMINAL_H
 
 #include <string>
+// #include "Color.h"
+
+
+#define BLUE_BLACK     1
+#define GREEN_BLACK    2
+#define RED_BLACK      3
+#define BLUE_GREY      4
+#define GREEN_GREY     5
+#define RED_GREY       6
+#define BLACK_BLUE     7
+#define BLACK_GREEN    8
+#define BLACK_RED      9
+#define WHITE_BLACK    10
+
 
 class Terminal
 {
@@ -34,12 +48,15 @@ class Terminal
         /**
         * Set a given cell at coordinates (x, y) to the given symbol.
         * Access outside of the bounds of the terminal is ignored.
+        * Can draw in color, marked by parameter colorpair.
         *
         * @param x The x coordinate
         * @param y The y coordinate
+        * @param colorpair The fore- and background colorpair
         * @param symbol The symbol to set the cell to
         */
-        void set_cell(int x, int y, char symbol);
+
+        void set_cell(int x, int y, char symbol, int colorpair);
 
         /**
         * Draws text starting at the given cell coordinates (x, y).

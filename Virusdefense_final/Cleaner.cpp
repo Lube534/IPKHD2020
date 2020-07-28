@@ -2,10 +2,11 @@
 
 Cleaner::Cleaner(int x, int y):
 _position(x,y),
-_color(color::Blue),
+_color(BLUE_BLACK),
 _former_position(x,y),
 _is_building(false),
-_refilling(false)
+_refilling(false),
+_collided(false)
 {}
 
 Vec2D Cleaner::get_position(){
@@ -28,7 +29,16 @@ void Cleaner::reset_refilling(){
     _refilling = false;
 }
 
-color Cleaner::get_color(){
+void Cleaner::collided(){
+    _collided = true;
+
+}
+
+bool Cleaner::get_collided(){
+    return _collided;
+}
+
+int Cleaner::get_color(){
     return _color;
 }
 
@@ -72,24 +82,24 @@ void Cleaner::control(char key, Safespace& safespace){
             _refilling = false;
             break;
 
-        case 'a':
-            if (_color == color::Blue){
-                _color = color::Green;
+        case 'q':
+            if (_color == BLUE_BLACK){
+                _color = GREEN_BLACK;
             }
-            else if (_color == color::Green){
-                _color = color::Red;
+            else if (_color == GREEN_BLACK){
+                _color = RED_BLACK;
             }
             else{
-                _color = color::Blue;
+                _color = BLUE_BLACK;
             }
             break;
         
-        case 's':
+        case 'd':
             _is_building = true;
             _refilling = false;
             break;
 
-        case 'c':
+        case ' ':
             _refilling = true;
             _is_building = false;
             break;
@@ -102,28 +112,20 @@ void Cleaner::control(char key, Safespace& safespace){
 }
 
 void Cleaner::draw(Terminal& term){
-    term.set_cell(_former_position.x, _former_position.y, ' ');
-    term.set_cell(_former_position.x, _former_position.y+1, ' ');
-    term.set_cell(_former_position.x, _former_position.y+2, ' ');
+    term.set_cell(_former_position.x, _former_position.y, ' ', _color);
+    term.set_cell(_former_position.x, _former_position.y+1, ' ', _color);
+    term.set_cell(_former_position.x, _former_position.y+2, ' ', _color);
     
-    switch(_color){
-        case color::Blue:
-            term.set_cell(_position.x, _position.y, 'B');
-            term.set_cell(_position.x, _position.y+1,'H');
-            term.set_cell(_position.x, _position.y+2, 'L');
-            break;
+    term.set_cell(_position.x, _position.y, 'o', _color);
+    term.set_cell(_position.x, _position.y+1,'D', _color);
+    term.set_cell(_position.x, _position.y+2, 'L', _color);
+}
 
-        case color::Green:
-            term.set_cell(_position.x, _position.y, 'G');
-            term.set_cell(_position.x, _position.y+1, 'H');
-            term.set_cell(_position.x, _position.y+2, 'L');
-            break;
-
-        case color::Red:
-            term.set_cell(_position.x, _position.y, 'R');
-            term.set_cell(_position.x, _position.y+1, 'H');
-            term.set_cell(_position.x, _position.y+2, 'L');
-            break;     
-    }
-    
+void Cleaner::reset(){
+    _position = {2,2};
+    _former_position = {2,2};
+    _color = BLUE_BLACK;
+    _is_building = false;
+    _refilling = false;
+    _collided = false;
 }
