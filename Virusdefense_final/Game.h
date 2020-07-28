@@ -45,6 +45,13 @@ class Game{
     bool is_won();
     
     /**
+    * Returns true if game is still on the startpage.
+    *
+    * @return True is _startpage < 2.
+    */
+    bool is_on_startpage();
+    
+    /**
     * Checks whether the cleaner was hit by a virus.
     * Calls the control-function of _cleaner.
     * Manages restart and quit.
@@ -118,7 +125,7 @@ class Game{
     * Draws the startpage text in the middle of the terminal.
     *
     */
-    // void draw_startpage();
+    void draw_startpage();
     
     /**
     * Draws the elapsed time, the money and destroyed viruses.

@@ -5,7 +5,7 @@ Game::Game(Terminal& term) :
     _game_over(false),
     _is_done(false),
     _is_won(false),
-    //_startpage(0),
+    _startpage(0),
     _spawntime_virus(0.f),
     _spawntime_projectile(0.f),
     _ticktime(0.f),
@@ -31,6 +31,13 @@ bool Game::is_over(){
 
 bool Game::is_won(){
     return _is_won;
+}
+
+bool Game::is_on_startpage(){
+    if(_startpage < 2){
+        return true;
+    }
+    return false;
 }
 
 void Game::update(float dt){
@@ -65,10 +72,10 @@ void Game::update(float dt){
             _is_done = true;
             break;
 
-        // case 'y':
-        //     if(_startpage < 2){
-        //         _startpage+=1;
-        //     }
+        case 'y':
+            if(_startpage < 2){
+                _startpage+=1;
+            }
     default:
         break;
     }
@@ -145,22 +152,15 @@ void Game::draw_actives() {
         draw_game_won();
         return;
     }
-    // if(_startpage < 2){
-    //     draw_startpage();
-    //     return;
-    // }
-    
-    
     
     _safespace.draw(_term);
     _cleaner.draw(_term);
     draw_time_and_money();
     for (unsigned int i =0; i < _lanes.size(); i++){
-                _lanes[i].draw_sprayer(_term);
-                _lanes[i].draw_projectiles(_term);
-                _lanes[i].draw_viruses(_term);
-            }
-
+        _lanes[i].draw_sprayer(_term);
+        _lanes[i].draw_projectiles(_term);
+        _lanes[i].draw_viruses(_term);
+    }
 }
 
 void Game::spawn_all_lanes(float dt){
@@ -254,60 +254,60 @@ void Game::draw_game_won(){
     _term.sleep(4);
 }
 
-// void Game::draw_startpage(){
+void Game::draw_startpage(){
     
-//     std::string line1;
-//     std::string line2;
-//     std::string line3;
-//     std::string line4;
-//     std::string line5;
-//     std::string line6;
-//     std::string line7;
-//     std::string line8;
-//     std::string line9;
-//     std::string line10;
-//     if (_startpage == 0){
-//         line1 = "Welcome to VIRUSDEFENSE";
-//         line2 = "This is a lanebased tower defense and your goal is to destroy 100 Viruses.";
-//         line3 = "The Viruses will spawn on the left side of the map and will move towards you.";
-//         line4 = "You are a cleaning person and have to build desinfection sprayers to destroy the viruses.";
-//         line5 = "Keep in mind to use the right desinfection spray. If the color does not match it is less effective.";
-//         line6 = "But careful! As always, money is short and you have to refill your sprayers when they are empty.";
-//         line7 = "If enough viruses reach a sprayer it cant be used anymore and has to be built anew.";
-//         line8 = "And if a Virus reaches you, you die! Luckily they cant survive for long in your safespace...";
-//         line9 = "You get Money over time and from destroying viruses! Get your sprayers ready and lets kick some spiky proteins!";
-//         line10 = "Press y to continue";
-//     }
-//     else{
-//         line1 = "Game controls:";
-//         line3 = "Move up: i, Move down: k, Move right: l, Move left: j";
-//         line4 = "Build a Sprayer: d; costs: 60 Viros";
-//         line5 = "Refill a Sprayer with you current colored spray: Space; costs 10 Viros";
-//         line6 = "Change your equipped Spray: q";
-//         line7 = "Restart: r";
-//         line8 = "Terminate the game: t";
-//         line9 = "So lets go!";
-//         line10 = "Press y to start!";
+    std::string line1;
+    std::string line2;
+    std::string line3;
+    std::string line4;
+    std::string line5;
+    std::string line6;
+    std::string line7;
+    std::string line8;
+    std::string line9;
+    std::string line10;
+    if (_startpage == 0){
+        line1 = "Welcome to VIRUSDEFENSE";
+        line2 = "In this lanebased tower defense your goal is to destroy 100 Viruses.";
+        line3 = "The Viruses will spawn on the left and will move towards you.";
+        line4 = "You are a cleaner who has to build desinfection sprayers against the viruses.";
+        line5 = "Use the right desinfection spray. It's less effective if the color doesn't match.";
+        line6 = "As always, money is short, but you have to refill your empty sprayers.";
+        line7 = "If enough viruses reach a sprayer it breaks and has to be built anew.";
+        line8 = "If a virus reaches you, you die! Luckily they won't survive for long in your safespace...";
+        line9 = "You get Money over time and from destroying viruses! Get your sprayers ready and kick some spikey proteins!";
+        line10 = "Press y to continue";
+    }
+    else{
+        line1 = "Game controls:";
+        line3 = "Move up: i, Move down: k, Move right: l, Move left: j";
+        line4 = "Build a Sprayer: d; costs: 60 Viros";
+        line5 = "Refill a Sprayer with your colored spray: Space; costs 10 V";
+        line6 = "Change your equipped Spray: q";
+        line7 = "Restart: r";
+        line8 = "Terminate the game: t";
+        line9 = "So lets go!";
+        line10 = "Press y to start!";
 
-//     }
+    }
 
-//     int half_width = _term.width() / 2;
-//     int half_height = _term.height() / 2;
+    int half_width = _term.width() / 2;
+    int half_height = _term.height() / 2;
 
-//     _term.clear();
-//     _term.draw_text(half_width - line1.size()/2, half_height-4, line1);
-//     _term.draw_text(half_width - line2.size()/2, half_height-3, line2);
-//     _term.draw_text(half_width - line3.size()/2, half_height-2, line3);
-//     _term.draw_text(half_width - line4.size()/2, half_height-1, line4);
-//     _term.draw_text(half_width - line5.size()/2, half_height, line5);
-//     _term.draw_text(half_width - line6.size()/2, half_height+1, line6);
-//     _term.draw_text(half_width - line7.size()/2, half_height+2, line7);
-//     _term.draw_text(half_width - line8.size()/2, half_height+3, line8);
-//     _term.draw_text(half_width - line9.size()/2, half_height+4, line9);
-//     _term.draw_text(half_width - line10.size()/2, half_height+5, line10);
+    _term.clear();
+    _term.draw_text(half_width - line1.size()/2, half_height-4, line1);
+    _term.draw_text(half_width - line2.size()/2, half_height-3, line2);
+    _term.draw_text(half_width - line3.size()/2, half_height-2, line3);
+    _term.draw_text(half_width - line4.size()/2, half_height-1, line4);
+    _term.draw_text(half_width - line5.size()/2, half_height, line5);
+    _term.draw_text(half_width - line6.size()/2, half_height+1, line6);
+    _term.draw_text(half_width - line7.size()/2, half_height+2, line7);
+    _term.draw_text(half_width - line8.size()/2, half_height+3, line8);
+    _term.draw_text(half_width - line9.size()/2, half_height+4, line9);
+    _term.draw_text(half_width - line10.size()/2, half_height+5, line10);
 
-//     _term.sleep(4);
-// }
+    _term.sleep(4);
+}
 
 void Game::draw_time_and_money(){
     std::string time = "Time elapsed: " + std::to_string((int)_elapsed_time) + " seconds";

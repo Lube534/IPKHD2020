@@ -16,6 +16,8 @@ int main()
 
 
     while (!game.is_done()) {
+       
+     
         
         t0 = t1;
         t1 = high_resolution_clock::now();
