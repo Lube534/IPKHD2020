@@ -89,7 +89,10 @@ void Cleaner::control(char key, Safespace& safespace){
             else if (_color == GREEN_BLACK){
                 _color = RED_BLACK;
             }
-            else{
+            else if (_color == RED_BLACK){
+                _color = YELLOW_BLACK;
+            }
+            else {
                 _color = BLUE_BLACK;
             }
             break;

@@ -15,6 +15,8 @@
 #define BLACK_GREEN    8
 #define BLACK_RED      9
 #define WHITE_BLACK    10
+#define YELLOW_BLACK   11
+#define BLACK_YELLOW   12
 
 
 class Terminal

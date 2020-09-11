@@ -7,11 +7,17 @@ Game::Game(Terminal& term) :
     _is_won(false),
     _startpage(0),
     _spawntime_virus(0.f),
+    _spawner_virus(5.0),
     _spawntime_projectile(0.f),
-    _ticktime(0.f),
+    _spawner_projectiles(3.0),
+    _ticktime_virus(0.f),
+    _movetime_virus(0.7),
+    _ticktime_projectile(0.f),
+    _movetime_projectile(0.7),
     _moneytick(0.f),
     _elapsed_time(0.f),
     _score(0),
+    _prescore(0),
     _money(70),
     _map_top_left(0,0),
     _map_bottom_right(50,22),
@@ -40,13 +46,17 @@ bool Game::is_on_startpage(){
     return false;
 }
 
+void Game::add_startpage(){
+    _startpage += 1;
+}
+
 void Game::update(float dt){
 
     char pressed = _term.get_key();
     if(_cleaner.get_collided()){
         _game_over = true;
     }
-    if(_score == 100){
+    if(_score >= 99999){
         _is_won = true;
     }
     _cleaner.control(pressed, _safespace);
@@ -72,11 +82,7 @@ void Game::update(float dt){
             _is_done = true;
             break;
 
-        case 'y':
-            if(_startpage < 2){
-                _startpage+=1;
-            }
-    default:
+
         break;
     }
     if (!_game_over||!_is_won) {
@@ -100,17 +106,31 @@ void Game::update(float dt){
 
 void Game::game_tick(float dt){
        
-       _ticktime += dt;
+       _ticktime_virus += dt;
+       _ticktime_projectile += dt;
+       if (_score - _prescore >= 100){
+           _movetime_virus *= 0.7;
+           _movetime_projectile *= 0.7;
+           _prescore = _score;
 
-       if (_ticktime >= 0.7f){
+       }
+
+       if (_ticktime_virus >= _movetime_virus){
+           
+           for (unsigned int i = 0; i < _lanes.size(); i++){
+                _lanes[i].move_viruses();
+            }
+
+            _ticktime_virus = 0.f;
+       }
+
+       if (_ticktime_projectile >= _movetime_projectile){
            
            for (unsigned int i = 0; i < _lanes.size(); i++){
                 _lanes[i].move_projectiles();
-                _lanes[i].move_viruses();
-                
             }
 
-            _ticktime = 0.f;
+            _ticktime_projectile = 0.f;
        }
 
 
@@ -136,7 +156,7 @@ void Game::draw_statics(){
 
     draw_borders();
     _cleaner.draw(_term);
-    for (unsigned int i =0; i < _lanes.size(); i++){
+    for (unsigned int i = 0; i < _lanes.size(); i++){
                 _lanes[i].draw(_term);
             }
 
@@ -145,10 +165,16 @@ void Game::draw_statics(){
 
 void Game::draw_actives() { 
     if(_game_over){
+        for(unsigned int i; i < _lanes.size(); i++){
+            _lanes[i].reset();
+        }
         draw_game_over();
         return;
     }
     if(_is_won){
+        for(unsigned int i; i < _lanes.size(); i++){
+            _lanes[i].reset();
+        }
         draw_game_won();
         return;
     }
@@ -156,7 +182,7 @@ void Game::draw_actives() {
     _safespace.draw(_term);
     _cleaner.draw(_term);
     draw_time_and_money();
-    for (unsigned int i =0; i < _lanes.size(); i++){
+    for (unsigned int i = 0; i < _lanes.size(); i++){
         _lanes[i].draw_sprayer(_term);
         _lanes[i].draw_projectiles(_term);
         _lanes[i].draw_viruses(_term);
@@ -164,7 +190,7 @@ void Game::draw_actives() {
 }
 
 void Game::spawn_all_lanes(float dt){
-    int spawner = 5;
+    
     bool full_lanes = true;
     for (unsigned int i = 0; i < _lanes.size(); i++){
         if(!_lanes[i].sprayer_is_built()){
@@ -173,45 +199,31 @@ void Game::spawn_all_lanes(float dt){
     }
 
     if(full_lanes){
-        spawner /= 2;
+        _spawner_virus = 2.5;
     }
     else{
-        spawner = 5;
+        _spawner_virus = 5;
     }
     _spawntime_virus += dt;
-    if(_spawntime_virus >= spawner){
+    if(_spawntime_virus >= _spawner_virus){
         
         static std::random_device rd;
         static std::mt19937 gen(rd());
         static std::uniform_int_distribution<> lane(0, 4);
 
-       _lanes[lane(gen)].spawn_virus();                   
-        
-        //VOR DEM VEKTOR _lanes
-
-        // if (lane(gen) == 1){
-        //     _lane1.spawn_virus();
-        // }
-        // else if (lane(gen) == 2){
-        //     _lane2.spawn_virus();
-        // }
-        // else if (lane(gen) == 3){
-        //     _lane3.spawn_virus();
-        // }
-        // else if (lane(gen) == 4){
-        //     _lane4.spawn_virus();
-        // }
-        // else {
-        //     _lane5.spawn_virus();
-        // };
+        _lanes[lane(gen)].spawn_virus();                   
         _spawntime_virus = 0.f;
     }
 }
    
 void Game::spawn_all_projectiles(float dt){
 
+    if (_score - _prescore >= 100){
+        _spawner_projectiles *= 0.9;
+        _prescore = _score;
+    }
     _spawntime_projectile += dt;
-    if(_spawntime_projectile >= 3.0f){
+    if(_spawntime_projectile >= _spawner_projectiles){
         for (unsigned int i = 0; i < _lanes.size(); i++){
                 _lanes[i].spawn_projectiles();
             }
@@ -231,7 +243,7 @@ void Game::draw_game_over(){
     int half_height = _term.height() / 2;
 
     _term.clear();
-    _term.draw_text(half_width - score_text.size()/2, half_height, game_over_text);
+    _term.draw_text(half_width - game_over_text.size()/2, half_height, game_over_text);
     _term.draw_text(half_width - score_text.size()/2, half_height + 1, score_text);
     _term.draw_text(half_width - reset_text.size()/2, half_height + 2, reset_text);
 
@@ -267,26 +279,26 @@ void Game::draw_startpage(){
     std::string line9;
     std::string line10;
     if (_startpage == 0){
-        line1 = "Welcome to VIRUSDEFENSE";
-        line2 = "In this lanebased tower defense your goal is to destroy 100 Viruses.";
-        line3 = "The Viruses will spawn on the left and will move towards you.";
-        line4 = "You are a cleaner who has to build desinfection sprayers against the viruses.";
-        line5 = "Use the right desinfection spray. It's less effective if the color doesn't match.";
-        line6 = "As always, money is short, but you have to refill your empty sprayers.";
-        line7 = "If enough viruses reach a sprayer it breaks and has to be built anew.";
-        line8 = "If a virus reaches you, you die! Luckily they won't survive for long in your safespace...";
-        line9 = "You get Money over time and from destroying viruses! Get your sprayers ready and kick some spikey proteins!";
+        line1 = "Welcome to VIRUS DEFENSE";
+        line2 = "In this lane tower defense your goal is to kill 100 viruses.";
+        line3 = "The viruses will spawn on the left and move towards you.";
+        line4 = "You are a cleaner and build desinfection sprayers.";
+        line5 = "Use matching colors for maximum effectivity.";
+        line6 = "Money is short, but refilling still costs money.";
+        line7 = "3 Viruses break one sprayer so you have to build it again.";
+        line8 = "Viruses kill on touch but die in the safespace.";
+        line9 = "Destroying viruses gets you money and so does time elapsing.";
         line10 = "Press y to continue";
     }
     else{
         line1 = "Game controls:";
         line3 = "Move up: i, Move down: k, Move right: l, Move left: j";
-        line4 = "Build a Sprayer: d; costs: 60 Viros";
-        line5 = "Refill a Sprayer with your colored spray: Space; costs 10 V";
-        line6 = "Change your equipped Spray: q";
+        line4 = "Build a Sprayer: d; costs 60 Viros";
+        line5 = "Refill a sprayer with your color: Space; costs 10 Viros";
+        line6 = "Change your color: q";
         line7 = "Restart: r";
         line8 = "Terminate the game: t";
-        line9 = "So lets go!";
+        line9 = "So lets go and kick some spike proteins!";
         line10 = "Press y to start!";
 
     }
@@ -326,7 +338,13 @@ void Game::draw_time_and_money(){
 
 void Game::reset_timers(){
     _spawntime_projectile = 0;
-    _ticktime = 0;
     _spawntime_virus = 0;
+    _ticktime_virus = 0;
+    _ticktime_projectile = 0;
     _elapsed_time = 0;
+    _movetime_projectile = 0.7;
+    _movetime_virus = 0.7;
+    _spawner_projectiles = 3.0;
+    _spawner_virus = 5.0;
+    
 }

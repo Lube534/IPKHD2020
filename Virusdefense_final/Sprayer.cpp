@@ -29,6 +29,10 @@ void Sprayer::change_color(Cleaner& cleaner){
         _color_bg = BLACK_RED;
     }
     
+    if (cleaner.get_color() == YELLOW_BLACK){
+        _color_bg = BLACK_YELLOW;
+    }
+    
 }
 
 Vec2D Sprayer::get_position(){

@@ -21,17 +21,46 @@ Terminal::Terminal(int width, int height)
 	timeout(0);
 	start_color();
 
+	// init_color(00,00,00,00);
+	/*
+	0 = Black
+	1 = Red
+	2 = Green
+	3 = Yellow
+	4 = Blue
+	5 = Purple
+	6 = Cyan
+	7 = White
+	8 = Grey
+	9 = Light red
+	10 = Neon green
+	11 = light yellow
+	12 = light blue
+	13 = light purple
+	14 = turquoise
+	15 = light white
+	16 = black or undefined
+	17 = dark dark dark dark blue
+	18 = dark dark dark blue
+	19 = dark dark blue
+	20 = dark blue
+	120 = interesting green
+	130 = orange
 
+	*/
 	init_pair(BLUE_BLACK, COLOR_CYAN, COLOR_BLACK);
-	init_pair(GREEN_BLACK, COLOR_GREEN, COLOR_BLACK);
-	init_pair(RED_BLACK, COLOR_RED, COLOR_BLACK);
+	init_pair(GREEN_BLACK, 120, COLOR_BLACK);
+	init_pair(RED_BLACK, 9, COLOR_BLACK);
 	init_pair(BLUE_GREY, COLOR_CYAN, COLOR_WHITE);
-	init_pair(GREEN_GREY, COLOR_GREEN, COLOR_WHITE);
-	init_pair(RED_GREY, COLOR_RED, COLOR_WHITE);
+	init_pair(GREEN_GREY, 120, COLOR_WHITE);
+	init_pair(RED_GREY, 9, COLOR_WHITE);
 	init_pair(BLACK_BLUE, COLOR_BLACK, COLOR_CYAN);
-	init_pair(BLACK_GREEN, COLOR_BLACK, COLOR_GREEN);
-	init_pair(BLACK_RED, COLOR_BLACK, COLOR_RED);
+	init_pair(BLACK_GREEN, COLOR_BLACK, 120);
+	init_pair(9, COLOR_BLACK, 9);
 	init_pair(WHITE_BLACK, COLOR_WHITE, COLOR_BLACK);
+	init_pair(YELLOW_BLACK, 11, COLOR_BLACK);
+	init_pair(BLACK_YELLOW, COLOR_BLACK, 11);
+
 }
 int Terminal::width() const
 {

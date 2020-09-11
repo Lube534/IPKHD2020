@@ -50,6 +50,13 @@ class Game{
     * @return True is _startpage < 2.
     */
     bool is_on_startpage();
+
+    /**
+    * Increments _startpage by 1.
+    *
+    * @return True is _startpage < 2.
+    */
+    void add_startpage();
     
     /**
     * Checks whether the cleaner was hit by a virus.
@@ -146,12 +153,18 @@ class Game{
         bool _is_done;
         bool _is_won;
         int _startpage;
-        float _spawntime_virus;
-        float _spawntime_projectile;
-        float _ticktime; // How fast viruses and projectiles move
+        float _spawntime_virus;  //Comparison variable for spawning of viruses
+        float _spawner_virus; //How fast viruses are spawned
+        float _spawntime_projectile; //Comparison variable for spawning of projectiles
+        float _spawner_projectiles; //How fast projectiles are spwaned
+        float _ticktime_virus; // Comparison variable for moving of viruses
+        float _movetime_virus; // How fast viruses move
+        float _ticktime_projectile; // Comparison variable for moving of projectiles 
+        float _movetime_projectile; //How fast projectiles move
         float _moneytick; //How often you get money
         float _elapsed_time; 
         int _score;
+        int _prescore;
         int _money;
         Vec2D _map_top_left;
         Vec2D _map_bottom_right;

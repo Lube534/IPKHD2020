@@ -81,7 +81,7 @@ int Lane::update(Terminal& term, Cleaner& cleaner, Safespace& safespace, int mon
 void Lane::spawn_virus(){
     static std::random_device rd;
     static std::mt19937 gen(rd());
-    static std::uniform_int_distribution<> cl(1, 2);
+    static std::uniform_int_distribution<> cl(1, 3);
     
     if (cl(gen) == 1){
         Virus new_virus(_length+4, _start, BLUE_BLACK);
@@ -91,8 +91,13 @@ void Lane::spawn_virus(){
         Virus new_virus(_length+4, _start, GREEN_BLACK);
         _virus_in_lane.push_back(new_virus); 
     }
-    else {
+    else if(cl(gen) == 3){
         Virus new_virus(_length+4, _start, RED_BLACK);
+        _virus_in_lane.push_back(new_virus);
+    }
+
+    else {
+        Virus new_virus(_length+4, _start, YELLOW_BLACK);
         _virus_in_lane.push_back(new_virus);
     }
 
@@ -111,7 +116,9 @@ int Lane::check_viruses(Terminal& term, Safespace& safespace, int money){
     if(!_virus_in_lane.empty()){
         for (unsigned int i = 0; i < _virus_in_lane.size(); i++){
             if (_virus_in_lane[i].get_hitpoints() <= 0){
+                // if (!_virus_in_lane[i].is_in_safespace()){
                 money += 12;
+                // }
                 _virus_in_lane[i].dedraw(term);
                 _virus_in_lane.erase(_virus_in_lane.begin()+i);
             }   
