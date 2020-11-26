@@ -1,5 +1,6 @@
 #include "Cleaner.h"
 
+
 Cleaner::Cleaner(int x, int y):
 _position(x,y),
 _color(BLUE_BLACK),
